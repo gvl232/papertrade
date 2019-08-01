@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
     var btcusdtlast = 0.00
     var money: Double = 50000.00
     var crypto: Double = 0.00
-    var marketOrders: ArrayList<Any> = ArrayList<Any>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

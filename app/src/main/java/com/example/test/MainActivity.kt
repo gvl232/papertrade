@@ -69,38 +69,50 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun sellOnClick(buttonView: View) {
+        try {
+
         var price = editText3.text.toString().toDouble()
         var amount = editText4.text.toString().toDouble()
 
-        if ((crypto - amount) >= 0) {
-            if (price - btcusdtlast <= 0) {
-                Toast.makeText(this, "Sold $amount BTC", Toast.LENGTH_SHORT).show()
-                updateWallet(price * amount, -1.0*amount)
-            } else {
-                sellorder.text = "$amount BTC @ $price USDT"
-                sellorder.isInvisible = false
+            if ((crypto - amount) >= 0) {
+                if (price - btcusdtlast <= 0) {
+                    Toast.makeText(this, "Sold $amount BTC", Toast.LENGTH_SHORT).show()
+                    updateWallet(price * amount, -1.0 * amount)
+                } else {
+                    sellorder.text = "$amount BTC @ $price USDT"
+                    sellorder.isInvisible = false
 
+                }
+            } else {
+                Toast.makeText(this, "Insufficient Funds", Toast.LENGTH_SHORT).show()
             }
-        } else{
-            Toast.makeText(this, "Insufficient Funds", Toast.LENGTH_SHORT).show()
+        }
+        catch(t: Throwable){
+            Toast.makeText(this, "Invalid Price or Amount", Toast.LENGTH_SHORT).show()
         }
     }
 
     fun buyOnClick(buttonView: View) {
-        var price = editText2.text.toString().toDouble()
-        var amount = editText5.text.toString().toDouble()
+        try {
 
-        if ((money - price * amount) >= 0) {
-            if (price - btcusdtlast >= 0) {
-                Toast.makeText(this, "Bought $amount BTC", Toast.LENGTH_SHORT).show()
-                updateWallet(-1.0 * price * amount, amount)
+            var price = editText2.text.toString().toDouble()
+            var amount = editText5.text.toString().toDouble()
+
+            if ((money - price * amount) >= 0) {
+                if (price - btcusdtlast >= 0) {
+                    Toast.makeText(this, "Bought $amount BTC", Toast.LENGTH_SHORT).show()
+                    updateWallet(-1.0 * price * amount, amount)
+                } else {
+                    buyorder.text = "$amount BTC @ $price USDT"
+                    buyorder.isInvisible = false
+
+                }
             } else {
-                buyorder.text = "$amount BTC @ $price USDT"
-                buyorder.isInvisible = false
-
+                Toast.makeText(this, "Insufficient Funds", Toast.LENGTH_SHORT).show()
             }
-        } else{
-            Toast.makeText(this, "Insufficient Funds", Toast.LENGTH_SHORT).show()
+        }
+        catch(t: Throwable){
+            Toast.makeText(this, "Invalid Price or Amount", Toast.LENGTH_SHORT).show()
         }
     }
 

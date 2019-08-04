@@ -113,6 +113,38 @@ class MainActivity : AppCompatActivity() {
             lastPriceView.text = "$$btcusdt USDT"
         }
     }
+
+    fun buy25(buttonView: View){
+        editText5.setText((money*0.25/btcusdtlast).toString())
+    }
+
+    fun buy50(buttonView: View){
+        editText5.setText((money*0.5/btcusdtlast).toString())
+    }
+
+    fun buy75(buttonView: View){
+        editText5.setText((money*0.75/btcusdtlast).toString())
+    }
+
+    fun buy100(buttonView: View){
+        editText5.setText((money*1/btcusdtlast).toString())
+    }
+
+    fun sell25(buttonView: View){
+        editText4.setText((crypto*0.25).toString())
+    }
+
+    fun sell50(buttonView: View){
+        editText4.setText((crypto*0.5).toString())
+    }
+
+    fun sell75(buttonView: View){
+        editText4.setText((crypto*0.75).toString())
+    }
+
+    fun sell100(buttonView: View){
+        editText4.setText((crypto*1).toString())
+    }
 }
 
 

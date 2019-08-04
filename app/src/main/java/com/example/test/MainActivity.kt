@@ -151,14 +151,26 @@ class MainActivity : AppCompatActivity() {
                     marketOrders.removeAt(buyIndex+2)
                 }
 
-            } else if ("sell" in marketOrders) {
-                var sellIndex = marketOrders.indexOf("buy")
+            }
+
+            if ("sell" in marketOrders) {
+                var sellIndex = marketOrders.indexOf("sell")
                 if (marketOrders[sellIndex+1].toDouble() <= btcusdtlast){
                     updateWallet(marketOrders[sellIndex+1].toDouble()*marketOrders[sellIndex+2].toDouble(), -1.0*marketOrders[sellIndex+2].toDouble())
 
                     marketOrders.removeAt(sellIndex)
                     marketOrders.removeAt(sellIndex+1)
                     marketOrders.removeAt(sellIndex+2)
+                }
+            }
+
+            runOnUiThread{
+                if ("buy" !in marketOrders){
+                    buyorder.isInvisible = true
+
+                }
+                if ("sell" !in marketOrders){
+                    sellorder.isInvisible = true
                 }
             }
         }

@@ -14,18 +14,16 @@ import kotlinx.android.synthetic.main.content_main.*
 import org.jetbrains.anko.doAsync
 import java.net.URL
 import java.text.DecimalFormat
-import kotlin.collections.ArrayList
 import kotlin.concurrent.timer
-
 
 class MainActivity : AppCompatActivity() {
 
     val t1 = timer(name = "quoteUpdate", initialDelay = 0, period = 500) { getQuote() }
 
-    var btcusdtlast = 0.00
+    var btcusdtlast:Double = 0.00
     var money: Double = 50000.00
     var crypto: Double = 0.00
-
+    var marketOrders: ArrayList<String> = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,8 +77,18 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Sold $amount BTC", Toast.LENGTH_SHORT).show()
                     updateWallet(price * amount, -1.0 * amount)
                 } else {
-                    sellorder.text = "$amount BTC @ $price USDT"
-                    sellorder.isInvisible = false
+                    var amount_rounded = "%.4f".format(amount).toDouble()
+
+                    if ("sell" in marketOrders){
+                        Toast.makeText(this, "A maximum of 1 sell order is allowed", Toast.LENGTH_SHORT).show()
+                    }
+                    else{
+                        sellorder.text = "$amount_rounded BTC @ $price USDT"
+                        sellorder.isInvisible = false
+                        marketOrders.add("sell")
+                        marketOrders.add(price.toString())
+                        marketOrders.add(amount.toString())
+                    }
 
                 }
             } else {
@@ -103,8 +111,17 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Bought $amount BTC", Toast.LENGTH_SHORT).show()
                     updateWallet(-1.0 * price * amount, amount)
                 } else {
-                    buyorder.text = "$amount BTC @ $price USDT"
-                    buyorder.isInvisible = false
+                    var amount_rounded = "%.4f".format(amount).toDouble()
+                    if ("buy" in marketOrders){
+                        Toast.makeText(this, "A maximum of 1 buy order is allowed", Toast.LENGTH_SHORT).show()
+                    }
+                    else{
+                        buyorder.text = "$amount_rounded BTC @ $price USDT"
+                        buyorder.isInvisible = false
+                        marketOrders.add("buy")
+                        marketOrders.add(price.toString())
+                        marketOrders.add(amount.toString())
+                    }
 
                 }
             } else {
@@ -123,7 +140,29 @@ class MainActivity : AppCompatActivity() {
             btcusdtlast = tickerString.substring(29, 36).toDouble()
             val lastPriceView: TextView = findViewById(R.id.lastPriceView) as TextView
             lastPriceView.text = "$$btcusdt USDT"
+
+            if ("buy" in marketOrders){
+                var buyIndex = marketOrders.indexOf("buy")
+                if (marketOrders[buyIndex+1].toDouble() >= btcusdtlast){
+                    updateWallet(-1.0*marketOrders[buyIndex+1].toDouble()*marketOrders[buyIndex+2].toDouble(), marketOrders[buyIndex+2].toDouble())
+
+                    marketOrders.removeAt(buyIndex)
+                    marketOrders.removeAt(buyIndex+1)
+                    marketOrders.removeAt(buyIndex+2)
+                }
+
+            } else if ("sell" in marketOrders) {
+                var sellIndex = marketOrders.indexOf("buy")
+                if (marketOrders[sellIndex+1].toDouble() <= btcusdtlast){
+                    updateWallet(marketOrders[sellIndex+1].toDouble()*marketOrders[sellIndex+2].toDouble(), -1.0*marketOrders[sellIndex+2].toDouble())
+
+                    marketOrders.removeAt(sellIndex)
+                    marketOrders.removeAt(sellIndex+1)
+                    marketOrders.removeAt(sellIndex+2)
+                }
+            }
         }
+
     }
 
     fun buy25(buttonView: View){
